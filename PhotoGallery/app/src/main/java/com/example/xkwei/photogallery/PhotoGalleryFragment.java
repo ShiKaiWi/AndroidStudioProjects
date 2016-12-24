@@ -1,6 +1,7 @@
 package com.example.xkwei.photogallery;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -32,7 +33,7 @@ import java.util.List;
  * Created by xkwei on 19/12/2016.
  */
 
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
 
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mGalleryItems;
@@ -71,7 +72,7 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        //updateItems();
+        updateItems();
         mHandler = new Handler();
         mThumbnailDownloader = new ThumbnailDownloader<>(mHandler);
         mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader
@@ -93,6 +94,12 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreateOptionsMenu(menu,mif);
         mif.inflate(R.menu.fragment_photo_gallery,menu);
 
+        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+        if (PollService.isServiceAlarmOn(getActivity())) {
+            toggleItem.setTitle(R.string.stop_polling);
+        } else {
+            toggleItem.setTitle(R.string.start_polling);
+        }
 
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         final SearchView sv = (SearchView) searchItem.getActionView();
@@ -128,6 +135,11 @@ public class PhotoGalleryFragment extends Fragment {
             case R.id.menu_item_clear:
                 QueryPreference.setStoredQuery(getActivity(), null);
                 updateItems();
+                return true;
+            case R.id.menu_item_toggle_polling:
+                boolean isShouldStartPollingService = !PollService.isServiceAlarmOn(getActivity());
+                PollService.setServiceAlarm(getActivity(),isShouldStartPollingService);
+                getActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
