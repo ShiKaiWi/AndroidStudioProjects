@@ -8,7 +8,7 @@ import android.content.Intent;
  * Created by xkwei on 24/12/2016.
  */
 
-public class StartupRecevier extends BroadcastReceiver {
+public class StartupReceiver extends BroadcastReceiver {
     private static final String TAG = "StartupReceiver";
 
     @Override

@@ -22,9 +22,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".PhotoPageActivity"
+                  android:configChanges="keyboardHidden|screenSize|orientation"/>
+
         <service android:name=".PollService"/>
 
-        <receiver android:name=".StartupRecevier">
+        <receiver android:name=".StartupReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

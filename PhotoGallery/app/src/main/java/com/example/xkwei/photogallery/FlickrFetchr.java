@@ -49,12 +49,12 @@ public class FlickrFetchr {
                 GalleryItem galleryItem = new GalleryItem();
                 galleryItem.setId(item.getString("id"));
                 galleryItem.setCaption(item.getString("title"));
+                galleryItem.setOwner(item.getString("owner"));
                 if(item.has("url_s")){
                     galleryItem.setUrl(item.getString("url_s"));
                 }
                 items.add(galleryItem);
             }
-
         }catch(JSONException je){
             Log.e(TAG,"fail to parse json file",je);
         }

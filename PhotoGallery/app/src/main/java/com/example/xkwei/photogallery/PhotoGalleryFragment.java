@@ -47,7 +47,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     }
 
     private class FetchItemTask extends AsyncTask<Void,Void,List<GalleryItem>> {
-        private String mQuery = null;
+        private String mQuery;
         public FetchItemTask(String s){mQuery = s;}
         @Override
         protected List<GalleryItem> doInBackground(Void... params){
@@ -80,7 +80,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
                   @Override
                   public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
                       Drawable pic = new BitmapDrawable(getResources(),thumbnail);
-                      target.bindGalleryItem(pic);
+                      target.bindPicture(pic);
                   }
               }
         );
@@ -107,7 +107,6 @@ public class PhotoGalleryFragment extends VisibleFragment {
         sv.setOnQueryTextListener( new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String s){
-
                 Log.d(TAG,"Query Search Text Submitted "+s);
                 QueryPreference.setStoredQuery(getActivity(),s);
                 updateItems();
@@ -158,16 +157,28 @@ public class PhotoGalleryFragment extends VisibleFragment {
         return v;
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder{
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView mImageView;
+        GalleryItem mGalleryItem;
         public PhotoHolder(View itemView){
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.fragment_photo_gallery_image_view);
+            itemView.setOnClickListener(this);
         }
 
-        public void bindGalleryItem(Drawable picture){
+        public void bindGalleryItem(GalleryItem galleryItem){
+            mGalleryItem = galleryItem;
+        }
+
+        public void bindPicture(Drawable picture){
             if(null!=picture)
                 mImageView.setImageDrawable(picture);
+        }
+        @Override
+        public void onClick(View v){
+//            Intent i = new Intent(Intent.ACTION_VIEW,mGalleryItem.getPhotoPageUri());
+            Intent i = PhotoPageActivity.newIntent(getActivity(),mGalleryItem.getPhotoPageUri());
+            startActivity(i);
         }
 
     }
@@ -190,7 +201,8 @@ public class PhotoGalleryFragment extends VisibleFragment {
         public void onBindViewHolder(PhotoHolder phd,int position){
             GalleryItem git = mItems.get(position);
             Drawable pic = null;
-            phd.bindGalleryItem(pic);
+            phd.bindPicture(pic);
+            phd.bindGalleryItem(git);
             mThumbnailDownloader.queueThumbnail(phd,git.getUrl());
         }
 

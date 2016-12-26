@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -37,6 +38,7 @@ public class PollService extends IntentService {
     public PollService(){
         super(TAG);
     }
+
     public static void setServiceAlarm(Context context,boolean isOn){
         Intent i =PollService.newIntent(context);
         PendingIntent pi = PendingIntent.getService(context,0,i,0);
@@ -82,6 +84,7 @@ public class PollService extends IntentService {
 
         Resources res = getResources();
         Intent i = PhotoGalleryActivity.newIntent(this);
+
         PendingIntent pi = PendingIntent.getActivity(this,0,i,0);
         Notification ntf = new NotificationCompat.Builder(this)
                 .setTicker(res.getString(R.string.new_pictures_title))
@@ -113,5 +116,11 @@ public class PollService extends IntentService {
         PendingIntent pi = PendingIntent
                 .getService(context, 0, i, PendingIntent.FLAG_NO_CREATE);
         return pi != null;
+    }
+
+    @Override
+    public int onStartCommand(Intent i,int flag,int id){
+        Log.i(TAG,"flag: "+flag+" id: "+id);
+        return Service.START_REDELIVER_INTENT;
     }
 }
