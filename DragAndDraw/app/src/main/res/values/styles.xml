@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <declare-styleable name="BoxDrawingView">
+        <attr name="canvas_color" format="color"/>
+    </declare-styleable>
+
 </resources>

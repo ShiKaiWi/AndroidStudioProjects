@@ -1,8 +1,10 @@
 package com.example.xkwei.draganddraw;
 
-import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -21,12 +23,13 @@ import java.util.List;
 public class BoxDrawingView extends View {
     private static final String TAG = "BoxDrawingView";
     private static final String BOX_ARRAY = "AllTheBoxes";
-    private static final String SUPER_SATTE = "SuperState";
+    private static final String SUPER_STATE = "SuperState";
 
     private Box mCurrentBox;
     private List<Box> BoxN = new ArrayList<>();
     private Paint mBoxPaint;
     private Paint mBackgroundPaint;
+    private int mCanvasColor;
 
 
     public BoxDrawingView(Context context){
@@ -39,11 +42,31 @@ public class BoxDrawingView extends View {
         mBoxPaint = new Paint();
         mBoxPaint.setColor(0x22ff0000);
 
-        mBackgroundPaint = new Paint();
-        mBackgroundPaint.setColor(0xfff8efe0);
+        TypedArray a = context.obtainStyledAttributes(attributeSet,R.styleable.BoxDrawingView);
+        mCanvasColor = a.getColor(R.styleable.BoxDrawingView_canvas_color,0xfff8efe0);
 
+        mBackgroundPaint = new Paint();
+        mBackgroundPaint.setColor(mCanvasColor);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec,int heightMeasureSpec){
+        setMeasuredDimension(measureDimension(widthMeasureSpec),measureDimension(heightMeasureSpec));
+    }
+
+    private int measureDimension(int dimMeasureSpec){
+        int mode = MeasureSpec.getMode(dimMeasureSpec);
+        int size = MeasureSpec.getSize(dimMeasureSpec);
+        int result = size;
+        switch(mode){
+            case MeasureSpec.EXACTLY:
+                break;
+            case MeasureSpec.AT_MOST:
+                break;
+            default:
+        }
+        return result;
+    }
     @Override
     protected void onDraw(Canvas canvas){
         canvas.drawPaint(mBackgroundPaint);
@@ -86,7 +109,7 @@ public class BoxDrawingView extends View {
     public Parcelable onSaveInstanceState(){
         Bundle args = new Bundle();
         args.putParcelableArrayList(BOX_ARRAY,(ArrayList<Box>)BoxN);
-        args.putParcelable(SUPER_SATTE,super.onSaveInstanceState());
+        args.putParcelable(SUPER_STATE,super.onSaveInstanceState());
         return args;
     }
 
@@ -94,6 +117,6 @@ public class BoxDrawingView extends View {
     public void onRestoreInstanceState(Parcelable state){
         Bundle args = (Bundle) state;
         BoxN = args.getParcelableArrayList(BOX_ARRAY);
-        super.onRestoreInstanceState(args.getParcelable(SUPER_SATTE));
+        super.onRestoreInstanceState(args.getParcelable(SUPER_STATE));
     }
 }
